@@ -1,1 +1,11 @@
-This file was created by PyCharm 2.7.3 for binding GitHub repository
+Google Appengine Application ID security.
+Decorator for secure inter-app communication. Just check if caller app id included to allowed access list.
+
+Decorator:
+@appIdSecurity(allowedAppIds)
+- where allowedAppIds is list of appIds which allowed to make requests.
+
+Example of allowedAppIds:
+allowedAppIds={"appId1","appId2"}
+
+For skip app id security just add '*' to allowedAppIds
