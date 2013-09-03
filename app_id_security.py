@@ -35,13 +35,14 @@ class SecurityError(Exception):
 # decorator
 def appIdSecurity(allowedAppIds):
     def decorator(view_func):
-        def wrapper(request, *args, **kwargs):
+        def wrapper(parent, *args, **kwargs):
             logging.info("appIdSecurity: Checking security...")
-            logging.info("appIdSecurity: Request body: %s" % request.request.body)
+            request = parent.request
+            logging.info("appIdSecurity: Request body: %s" % request.body)
             result = Response()
             try:
                 checkCallerApplicationId(request, allowedAppIds)
-                result = view_func(request, *args, **kwargs)
+                result = view_func(parent, *args, **kwargs)
                 return result
             except SecurityError as se:
                 result.status = 403
@@ -70,13 +71,7 @@ def checkCallerApplicationId(request, allowedAppIds):
 
     logging.info("appIdSecurity: Caller AppId: %s" % callerAppId)
     #check caller app id
-    error = True
-    for allowedAppId in allowedAppIds:
-        logging.info("appIdSecurity: Granted host: %s" % allowedAppId)
-        if callerAppId == allowedAppId:
-            error = False
-
-    if error:
-        msg = "Not allowed remote Application ID:'%s' not included in the list of granted access app IDs." % + callerAppId
+    if not callerAppId in allowedAppIds:
+        msg = "Not allowed remote Application ID:'%s' not included in the list of granted access app IDs." % callerAppId
         logging.error("appIdSecurity: %s" % msg)
         raise SecurityError(msg)
