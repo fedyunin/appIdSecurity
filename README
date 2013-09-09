@@ -8,4 +8,8 @@ Decorator:
 Example of allowedAppIds:
 allowedAppIds={"appId1","appId2"}
 
-For skip app id security just add '*' to allowedAppIds
+For skip app id security just add '*' to allowedAppIds.
+
+Decorator:
+@appIdSecurityForEndpoints
+- for use with google cloud endpoints methods.
