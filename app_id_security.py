@@ -53,6 +53,26 @@ def appIdSecurity(allowedAppIds):
 
     return decorator
 
+# decorator
+def appIdSecurityForEndpoints(allowedAppIds):
+    def decorator(view_func):
+        def wrapper(parent, *args, **kwargs):
+            logging.info("appIdSecurity: Checking security...")
+            request = parent.request_state
+            result = Response()
+            try:
+                checkCallerApplicationId(request, allowedAppIds)
+                result = view_func(parent, *args, **kwargs)
+                return result
+            except SecurityError as se:
+                result.status = 403
+                result.body = se.value
+                return result
+
+        return wrapper
+
+    return decorator
+
 
 # checks that app id value in request header exists in the allowedAppIds list.
 def checkCallerApplicationId(request, allowedAppIds):
